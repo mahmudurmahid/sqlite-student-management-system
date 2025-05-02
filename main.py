@@ -119,7 +119,19 @@ class SearchDialog(QDialog):
         self.setLayout(layout)
 
     def search_student(self):
-        pass
+        name = self.student_name.text()
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        result = cursor.execute("SELECT * FROM students WHERE name = ?", (name,))
+        row = list(result)[0]
+        print(row)
+        items = main_window.table.findItems("John Smith", Qt.MatchFlag.MatchFixedString)
+        for item in items:
+            print(item)
+            main_window.table.item(item.row(), 1).setSelected(True)
+
+        cursor.close()
+        connection.close()
 
 
 # To run the application
