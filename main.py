@@ -125,7 +125,7 @@ class SearchDialog(QDialog):
         result = cursor.execute("SELECT * FROM students WHERE name = ?", (name,))
         row = list(result)[0]
         print(row)
-        items = main_window.table.findItems("John Smith", Qt.MatchFlag.MatchFixedString)
+        items = main_window.table.findItems(name, Qt.MatchFlag.MatchFixedString)
         for item in items:
             print(item)
             main_window.table.item(item.row(), 1).setSelected(True)
