@@ -57,6 +57,12 @@ class MainWindow(QMainWindow):
         delete_button = QPushButton("Delete Student Record")
         delete_button.clicked.connect(self.delete_record)
 
+        # Clears the previous buttons if another cell is clicked
+        children = self.findChildren(QPushButton)
+        if children:
+            for child in children:
+                self.status_bar.removeWidget(child)
+
         self.status_bar.addWidget(edit_button)
         self.status_bar.addWidget(delete_button)
 
