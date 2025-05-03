@@ -23,7 +23,8 @@ class MainWindow(QMainWindow):
 
         about_action = QAction("About", self)
         help_menu_item.addAction(about_action)
-        about_action.setMenuRole(QAction.MenuRole.NoRole) # Allows help menu to be displayed
+        about_action.setMenuRole(QAction.MenuRole.NoRole) # Allows help menu to be displayed on MacOS
+        about_action.triggered.connect(self.about)
 
         search_student_action = QAction(QIcon("icons/search.png"),"Edit", self)
         search_student_action.triggered.connect(self.edit_student)
@@ -66,7 +67,6 @@ class MainWindow(QMainWindow):
         self.status_bar.addWidget(edit_button)
         self.status_bar.addWidget(delete_button)
 
-    
     def load_data(self):
         connection = sqlite3.connect("database.db")
         result = connection.execute("SELECT * FROM students")
@@ -92,6 +92,10 @@ class MainWindow(QMainWindow):
 
     def delete_record(self):
         dialog = DeleteDialog()
+        dialog.exec()
+    
+    def about(self):
+        dialog = AboutDialog()
         dialog.exec()
 
 
@@ -266,6 +270,12 @@ class DeleteDialog(QDialog):
         confirmation_widget.exec()
 
 
+class AboutDialog(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("About")
+        content = "This is a simple student management system built using PyQt6 and SQLite. It allows you to add, edit, and delete student records."
+        self.setText(content)
 
 # To run the application
 app = QApplication(sys.argv)
