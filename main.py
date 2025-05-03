@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QApplication, QVBoxLayout, QLabel, QWidget, QGridLayout, QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, QVBoxLayout, QComboBox
-from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QApplication, QVBoxLayout, QLabel, QWidget, QGridLayout, QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, QVBoxLayout, QComboBox, QToolBar, QStatusBar
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
 import sys
 import sqlite3
@@ -9,6 +9,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__() # Calls the constructor of the parent class QMainWindow
         self.setWindowTitle("Student Management System")
+        self.setMinimumSize(700, 600) # Sets the minimum size of the window
         self.setFixedHeight(500)
         self.setFixedWidth(500)
         # Navigation bar items
@@ -16,7 +17,7 @@ class MainWindow(QMainWindow):
         help_menu_item = self.menuBar().addMenu("&Help")
         edit_menu_item = self.menuBar().addMenu("&Edit")
 
-        add_student_action = QAction("Add Student", self)
+        add_student_action = QAction(QIcon("icons/add.png"), "Add Student", self)
         add_student_action.triggered.connect(self.insert_student)
         file_menu_item.addAction(add_student_action)
 
@@ -24,15 +25,41 @@ class MainWindow(QMainWindow):
         help_menu_item.addAction(about_action)
         about_action.setMenuRole(QAction.MenuRole.NoRole) # Allows help menu to be displayed
 
-        search_student_action = QAction("Edit", self)
+        search_student_action = QAction(QIcon("icons/search.png"),"Edit", self)
         search_student_action.triggered.connect(self.edit_student)
         edit_menu_item.addAction(search_student_action)
+
         # Create the table
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(("ID", "Name", "Course", "Mobile Number"))
         self.table.verticalHeader().setVisible(False) # Hides the vertical header
         self.setCentralWidget(self.table) # Allows the table to be displayed in the main window
+
+        # Toolbar and toolbar items
+        toolbar = QToolBar()
+        toolbar.setMovable(True)
+        self.addToolBar(toolbar)
+
+        toolbar.addAction(add_student_action)
+        toolbar.addAction(search_student_action)
+
+        # Status bar and status bar items
+        self.status_bar = QStatusBar()
+        self.setStatusBar(self.status_bar)
+
+        self.table.cellClicked.connect(self.cell_clicked)
+
+    def cell_clicked(self):
+        edit_button = QPushButton("Edit Student Record")
+        edit_button.clicked.connect(self.edit_record)
+
+        delete_button = QPushButton("Delete Student Record")
+        delete_button.clicked.connect(self.delete_record)
+
+        self.status_bar.addWidget(edit_button)
+        self.status_bar.addWidget(delete_button)
+
     
     def load_data(self):
         connection = sqlite3.connect("database.db")
@@ -51,6 +78,14 @@ class MainWindow(QMainWindow):
     
     def edit_student(self):
         dialog = SearchDialog()
+        dialog.exec()
+
+    def edit_record(self):
+        dialog = EditDialog()
+        dialog.exec()
+
+    def delete_record(self):
+        dialog = DeleteDialog()
         dialog.exec()
 
 
@@ -132,6 +167,16 @@ class SearchDialog(QDialog):
 
         cursor.close()
         connection.close()
+
+
+class EditDialog(QDialog):
+    pass
+
+
+class DeleteDialog(QDialog):
+    pass
+
+
 
 
 # To run the application
