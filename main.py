@@ -184,11 +184,14 @@ class EditDialog(QDialog):
         
         # Create widgets below
         layout = QVBoxLayout()
-        # Student name widget
+
         # Get student name from the selected row
         index = main_window.table.currentRow()
         student_name = main_window.table.item(index, 1).text() # Fix student name to pop un window
-        self.student_name = QLineEdit(student_name) # Fix student name to pop un window
+        # Get student ID from the selected row
+        self.student_id = main_window.table.item(index, 0).text()
+        # Student name widget
+        self.student_name = QLineEdit(student_name) # Fix student name to pop up window
         self.student_name.setPlaceholderText("Student Name")
         layout.addWidget(self.student_name)
         # Course name combo box
@@ -206,14 +209,20 @@ class EditDialog(QDialog):
         self.mobile_number.setPlaceholderText("Mobile Number")
         layout.addWidget(self.mobile_number)
         # Submit button
-        submit_button = QPushButton("Submit Information")
+        submit_button = QPushButton("Update Information")
         submit_button.clicked.connect(self.update_student)
         layout.addWidget(submit_button)
 
         self.setLayout(layout)
     
     def update_student(self):
-        pass
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        cursor.execute("UPDATE students SET name = ?, course = ?, mobile = ? WHERE id = ?", (self.student_name.text(), self.course_name.currentText(), self.mobile_number.text(), self.student_id))
+
+        connection.commit()
+        cursor.close()
+        connection.close()
 
 
 class DeleteDialog(QDialog):
