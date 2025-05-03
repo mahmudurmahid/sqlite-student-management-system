@@ -176,7 +176,44 @@ class SearchDialog(QDialog):
 
 
 class EditDialog(QDialog):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Update Student Data")
+        self.setFixedHeight(300)
+        self.setFixedWidth(300)
+        
+        # Create widgets below
+        layout = QVBoxLayout()
+        # Student name widget
+        # Get student name from the selected row
+        index = main_window.table.currentRow()
+        student_name = main_window.table.item(index, 1).text() # Fix student name to pop un window
+        self.student_name = QLineEdit(student_name) # Fix student name to pop un window
+        self.student_name.setPlaceholderText("Student Name")
+        layout.addWidget(self.student_name)
+        # Course name combo box
+        course_name = main_window.table.item(index, 2).text() # Fix course name to pop up window
+
+        self.course_name = QComboBox()
+        courses = ["Computer Science", "Mathematics", "Physics", "Chemistry", "Biology", "Astronomy"]
+        self.course_name.addItems(courses)
+        self.course_name.setCurrentText(course_name) # Fix course name to pop up window
+        layout.addWidget(self.course_name)
+        # Mobile number widget
+        mobile_number = main_window.table.item(index, 3).text() # Fix mobile number to pop up window
+
+        self.mobile_number = QLineEdit(mobile_number) # Fix mobile number to pop up window
+        self.mobile_number.setPlaceholderText("Mobile Number")
+        layout.addWidget(self.mobile_number)
+        # Submit button
+        submit_button = QPushButton("Submit Information")
+        submit_button.clicked.connect(self.update_student)
+        layout.addWidget(submit_button)
+
+        self.setLayout(layout)
+    
+    def update_student(self):
+        pass
 
 
 class DeleteDialog(QDialog):
