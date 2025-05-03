@@ -223,6 +223,7 @@ class EditDialog(QDialog):
         connection.commit()
         cursor.close()
         connection.close()
+        main_window.load_data()
 
 
 class DeleteDialog(QDialog):
