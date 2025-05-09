@@ -14,7 +14,6 @@ class DatabaseConnection:
         """ Connects to the SQLite database and returns the connection object. """
         connection = sqlite3.connect(self.database_filename)
         return connection
-    
 
 
 class MainWindow(QMainWindow):
