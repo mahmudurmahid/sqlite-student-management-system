@@ -7,9 +7,11 @@ import sqlite3
 
 class DatabaseConnection:
     def __init__(self, database_filename="database.db"):
+        """ Initializes the database connection with the given filename. """
         self.database_filename = database_filename
     
     def connect(self):
+        """ Connects to the SQLite database and returns the connection object. """
         connection = sqlite3.connect(self.database_filename)
         return connection
     
@@ -17,6 +19,7 @@ class DatabaseConnection:
 
 class MainWindow(QMainWindow):
     def __init__(self):
+        """ Initializes the main window of the application. """
         super().__init__() # Calls the constructor of the parent class QMainWindow
         self.setWindowTitle("Student Management System")
         self.setMinimumSize(700, 600) # Sets the minimum size of the window
@@ -62,6 +65,7 @@ class MainWindow(QMainWindow):
         self.table.cellClicked.connect(self.cell_clicked)
 
     def cell_clicked(self):
+        """ Displays the edit and delete buttons in the status bar when a cell is clicked. """
         edit_button = QPushButton("Edit Student Record")
         edit_button.clicked.connect(self.edit_record)
 
@@ -78,6 +82,7 @@ class MainWindow(QMainWindow):
         self.status_bar.addWidget(delete_button)
 
     def load_data(self):
+        """ Loads the student data from the database and displays it in the table. """
         connection = DatabaseConnection().connect()
         result = connection.execute("SELECT * FROM students")
         self.table.setRowCount(0) # Makes sure new data does not duplicate the old data
@@ -89,28 +94,34 @@ class MainWindow(QMainWindow):
         connection.close()
 
     def insert_student(self):
+        """ Opens the dialog to add a new student. """
         dialog = InsertDialog()
         dialog.exec()
     
     def edit_student(self):
+        """ Opens the dialog to edit an existing student. """
         dialog = SearchDialog()
         dialog.exec()
 
     def edit_record(self):
+        """ Opens the dialog to edit the selected student record. """
         dialog = EditDialog()
         dialog.exec()
 
     def delete_record(self):
+        """ Opens the dialog to delete the selected student record. """
         dialog = DeleteDialog()
         dialog.exec()
     
     def about(self):
+        """ Displays the about dialog. """
         dialog = AboutDialog()
         dialog.exec()
 
 
 class InsertDialog(QDialog):
     def __init__(self):
+        """ Initializes the dialog to add a new student. """
         super().__init__()
         self.setWindowTitle("Add Student Data")
         self.setFixedHeight(300)
@@ -139,6 +150,7 @@ class InsertDialog(QDialog):
         self.setLayout(layout)
     
     def add_student(self):
+        """ Adds a new student to the database. """
         name = self.student_name.text()
         course = self.course_name.itemText(self.course_name.currentIndex())
         mobile = self.mobile_number.text()
@@ -155,6 +167,7 @@ class InsertDialog(QDialog):
 
 class SearchDialog(QDialog):
     def __init__(self):
+        """ Initializes the dialog to search for a student. """
         super().__init__()
         self.setWindowTitle("Search Student Data")
         self.setFixedHeight(300)
@@ -174,6 +187,7 @@ class SearchDialog(QDialog):
         self.setLayout(layout)
 
     def search_student(self):
+        """ Searches for a student in the database. """
         name = self.student_name.text()
         connection = sqlite3.connect("database.db")
         cursor = connection.cursor()
@@ -191,6 +205,7 @@ class SearchDialog(QDialog):
 
 class EditDialog(QDialog):
     def __init__(self):
+        """ Initializes the dialog to edit an existing student. """
         super().__init__()
         self.setWindowTitle("Update Student Data")
         self.setFixedHeight(300)
@@ -230,6 +245,7 @@ class EditDialog(QDialog):
         self.setLayout(layout)
     
     def update_student(self):
+        """ Updates the student information in the database. """
         connection = DatabaseConnection().connect()
         cursor = connection.cursor()
         cursor.execute("UPDATE students SET name = ?, course = ?, mobile = ? WHERE id = ?", (self.student_name.text(), self.course_name.currentText(), self.mobile_number.text(), self.student_id))
